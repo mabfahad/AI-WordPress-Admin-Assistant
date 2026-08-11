@@ -1,0 +1,14 @@
+{
+    "name": "mabfahad/ai-wordpress-admin-assistant",
+    "description": "An AI-powered WordPress admin assistant with tool calling and WordPress/WooCommerce integrations.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "AIWordPressAssistant\\": "includes/"
+        }
+    }
+}
