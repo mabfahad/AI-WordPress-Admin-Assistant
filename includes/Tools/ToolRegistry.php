@@ -2,7 +2,9 @@
 
 namespace AIWordPressAssistant\Tools;
 
+use AIWordPressAssistant\Tools\GetPostsTool;
 use AIWordPressAssistant\Tools\GetSiteInfoTool;
+use AIWordPressAssistant\Tools\GetPluginsTool;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -22,6 +24,10 @@ class ToolRegistry {
 
         $this->register(
             new GetSiteInfoTool()
+        );
+
+        $this->register(
+            new GetPluginsTool()
         );
     }
 
