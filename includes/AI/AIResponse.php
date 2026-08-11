@@ -16,7 +16,8 @@ class AIResponse {
         private readonly string $content,
         private readonly string $provider,
         private readonly ?string $model = null,
-        private readonly array $rawResponse = []
+        private readonly array $rawResponse = [],
+        private readonly array $tool_calls = []
     ) {
     }
 
@@ -39,6 +40,14 @@ class AIResponse {
      */
     public function getModel(): ?string {
         return $this->model;
+    }
+
+    public function getToolCalls(): array {
+        return $this->tool_calls;
+    }
+
+    public function hasToolCalls(): bool {
+        return ! empty( $this->tool_calls );
     }
 
     /**

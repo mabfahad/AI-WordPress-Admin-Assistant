@@ -6,6 +6,10 @@ use AIWordPressAssistant\Admin\AdminMenu;
 use AIWordPressAssistant\REST\AssistantController;
 use AIWordPressAssistant\AI\AIOrchestrator;
 use AIWordPressAssistant\AI\OpenAIProvider;
+use AIWordPressAssistant\AI\AIProviderFactory;
+use AIWordPressAssistant\Settings\Settings;
+use AIWordPressAssistant\Settings\SettingsPage;
+use AIWordPressAssistant\Tools\ToolRegistry;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,9 +22,13 @@ class Plugin {
      */
 
     private AIOrchestrator $ai_orchestrator;
+    private Settings $settings;
+    private ToolRegistry $tool_registry;
     public function init(): void {
+        $this->settings = new Settings();
         $this->initialize_ai();
         $this->register_admin();
+        $this->register_settings();
         $this->register_rest_api();
     }
 
@@ -103,14 +111,43 @@ class Plugin {
     }
 
     private function initialize_ai(): void {
-        $provider = new OpenAIProvider(
-            defined( 'AI_WP_ASSISTANT_OPENAI_API_KEY' )
-                ? AI_WP_ASSISTANT_OPENAI_API_KEY
-                : ''
+
+        $this->tool_registry = new ToolRegistry();
+
+        $factory = new AIProviderFactory(
+            $this->settings
         );
 
+        $provider = $factory->make();
+
         $this->ai_orchestrator = new AIOrchestrator(
-            $provider
+            $provider,
+            $this->tool_registry
+        );
+    }
+
+    private function register_settings(): void {
+        $settings_page = new SettingsPage(
+            $this->settings
+        );
+
+        add_action(
+            'admin_init',
+            [ $settings_page, 'register' ]
+        );
+
+        add_action(
+            'admin_menu',
+            function () use ( $settings_page ) {
+                add_submenu_page(
+                    'ai-wordpress-admin-assistant',
+                    __( 'Settings', 'ai-wordpress-admin-assistant' ),
+                    __( 'Settings', 'ai-wordpress-admin-assistant' ),
+                    'manage_options',
+                    'ai-wordpress-admin-assistant-settings',
+                    [ $settings_page, 'render' ]
+                );
+            }
         );
     }
 }

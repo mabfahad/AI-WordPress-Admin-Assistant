@@ -2,6 +2,8 @@
 
 namespace AIWordPressAssistant\AI;
 
+use AIWordPressAssistant\Tools\ToolRegistry;
+
 defined( 'ABSPATH' ) || exit;
 
 class AIOrchestrator {
@@ -12,14 +14,22 @@ class AIOrchestrator {
     private AIProviderInterface $provider;
 
     /**
+     * WordPress tool registry.
+     */
+    private ToolRegistry $tools;
+
+    /**
      * Constructor.
      *
      * @param AIProviderInterface $provider AI provider.
+     * @param ToolRegistry         $tools    WordPress tools.
      */
     public function __construct(
-        AIProviderInterface $provider
+        AIProviderInterface $provider,
+        ToolRegistry $tools
     ) {
         $this->provider = $provider;
+        $this->tools    = $tools;
     }
 
     /**
@@ -30,6 +40,7 @@ class AIOrchestrator {
      * @return AIResponse
      */
     public function respond( string $message ): AIResponse {
+
         $messages = [
             [
                 'role'    => 'system',
@@ -44,7 +55,7 @@ class AIOrchestrator {
         return $this->provider->chat(
             $messages,
             [
-                'model' => 'gpt-4.1-mini',
+                'tools' => $this->tools->get_definitions(),
             ]
         );
     }
@@ -61,12 +72,19 @@ You are an AI assistant for WordPress administrators.
 Your job is to help administrators understand and manage
 their WordPress websites.
 
+You have access to WordPress tools that can retrieve
+information from the current WordPress site.
+
+When a user's question requires information about the
+WordPress site, use the appropriate tool instead of
+guessing or providing generic instructions.
+
 Be concise, accurate, and practical.
 
-Do not claim to have performed an action unless the system
-has actually performed that action.
+Never claim that you performed an action unless the system
+actually performed that action.
 
-At this stage, you do not have access to WordPress site data.
+Never invent WordPress site data.
 PROMPT;
     }
 }

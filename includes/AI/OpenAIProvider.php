@@ -106,4 +106,12 @@ class OpenAIProvider implements AIProviderInterface {
             rawResponse: $data
         );
     }
+
+    public function get_id(): string {
+        return 'openai';
+    }
+
+    public function get_name(): string {
+        return 'OpenAI';
+    }
 }
