@@ -1,0 +1,67 @@
+.ai-wp-assistant {
+    max-width: 1000px;
+}
+
+.ai-wp-assistant__header {
+    margin-bottom: 24px;
+}
+
+.ai-wp-assistant__header h1 {
+    margin-bottom: 8px;
+}
+
+.ai-wp-assistant__header p {
+    color: #646970;
+}
+
+.ai-wp-assistant__chat {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ai-wp-assistant__messages {
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.ai-wp-assistant__message {
+    max-width: 80%;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    border-radius: 8px;
+}
+
+.ai-wp-assistant__message p {
+    margin: 8px 0 0;
+}
+
+.ai-wp-assistant__message--assistant {
+    background: #f6f7f7;
+}
+
+.ai-wp-assistant__message--user {
+    margin-left: auto;
+    background: #e7f3ff;
+}
+
+.ai-wp-assistant__form {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    padding: 16px;
+    border-top: 1px solid #dcdcde;
+}
+
+.ai-wp-assistant__form textarea {
+    flex: 1;
+    resize: vertical;
+    min-height: 60px;
+}
+
+.ai-wp-assistant__form button {
+    min-width: 80px;
+}
