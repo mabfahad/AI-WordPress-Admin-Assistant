@@ -5,6 +5,7 @@ namespace AIWordPressAssistant\REST;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
+use AIWordPressAssistant\AI\AIOrchestrator;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,6 +15,11 @@ class AssistantController {
      * REST API namespace.
      */
     private const NAMESPACE = 'ai-assistant/v1';
+    private AIOrchestrator $orchestrator;
+
+    public function __construct(AIOrchestrator $orchestrator) {
+        $this->orchestrator = $orchestrator;
+    }
 
     /**
      * Register REST routes.
@@ -69,16 +75,26 @@ class AssistantController {
             );
         }
 
-        return new WP_REST_Response(
-            [
-                'success' => true,
-                'message' => sprintf(
-                    /* translators: %s: user message. */
-                    __( 'I received your message: "%s"', 'ai-wordpress-admin-assistant' ),
-                    $message
-                ),
-            ],
-            200
-        );
+        try {
+            $response = $this->orchestrator->respond( $message );
+
+            return new WP_REST_Response(
+                [
+                    'success' => true,
+                    'message' => $response->getContent(),
+                    'provider' => $response->getProvider(),
+                    'model'    => $response->getModel(),
+                ],
+                200
+            );
+        } catch ( \Throwable $exception ) {
+            return new WP_Error(
+                'ai_assistant_error',
+                $exception->getMessage(),
+                [
+                    'status' => 500,
+                ]
+            );
+        }
     }
 }

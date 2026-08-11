@@ -4,6 +4,8 @@ namespace AIWordPressAssistant;
 
 use AIWordPressAssistant\Admin\AdminMenu;
 use AIWordPressAssistant\REST\AssistantController;
+use AIWordPressAssistant\AI\AIOrchestrator;
+use AIWordPressAssistant\AI\OpenAIProvider;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,7 +16,10 @@ class Plugin {
      *
      * @return void
      */
+
+    private AIOrchestrator $ai_orchestrator;
     public function init(): void {
+        $this->initialize_ai();
         $this->register_admin();
         $this->register_rest_api();
     }
@@ -44,7 +49,7 @@ class Plugin {
      * @return void
      */
     private function register_rest_api(): void {
-        $controller = new AssistantController();
+        $controller = new AssistantController($this->ai_orchestrator);
 
         add_action(
             'rest_api_init',
@@ -94,6 +99,18 @@ class Plugin {
                     ),
                 ],
             ]
+        );
+    }
+
+    private function initialize_ai(): void {
+        $provider = new OpenAIProvider(
+            defined( 'AI_WP_ASSISTANT_OPENAI_API_KEY' )
+                ? AI_WP_ASSISTANT_OPENAI_API_KEY
+                : ''
+        );
+
+        $this->ai_orchestrator = new AIOrchestrator(
+            $provider
         );
     }
 }
